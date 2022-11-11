@@ -22,6 +22,8 @@ function setup() {
 
 function draw() {
 	background(255);
+
+	// change statement to pd things
 	if (mouseIsPressed) {
 		if (cur_width < max_width){
 			cur_width += 2;
