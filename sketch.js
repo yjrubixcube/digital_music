@@ -1,23 +1,40 @@
-let img;
+// global vars
+let screen = [1080, 540];
 
-function setup() {
-  createCanvas(690, 420);
-  fill(0,255,255);
+// img vars
+let main_figure;
+let max_width = screen[0]/5, max_height = screen[1]/5;
+let min_width = screen[0]/10, min_height = screen[1]/10;
+let cur_width = max_width, cur_height = max_height;
 
-  img = loadImage("images/test.png");
 
+
+function move_mouth() {
+	main_figure = loadImage("images/test.png");
 }
 
-function draw() {
-  // background(0);
-  // if (mouseIsPressed) {
-  //   fill(0);
-  // } else {
-  //   fill(255);
-  // }
-  // ellipse(mouseX, mouseY, 80, 80);
+function setup() {
+	createCanvas(screen[0], screen[1]);
+	// fill(0, 255, 255);
+	move_mouth()
+}
 
-  // image(img, 0, 0);
-  image(img, 0, height/2, img.width/2, img.height/2);
-  
+
+function draw() {
+	background(255);
+	if (mouseIsPressed) {
+		if (cur_width < max_width){
+			cur_width += 2;
+			cur_height += 1;
+		}
+	}
+	else{
+		if (cur_width > min_width){
+			cur_width -= 2;
+			cur_height -= 1;
+		}
+	}
+
+	image(main_figure, mouseX, mouseY, cur_width, cur_height);
+
 }
