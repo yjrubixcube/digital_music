@@ -78,6 +78,8 @@ function draw() {
 		if (opach >= 0) {
 			opach -= 15;
 		}
+		Pd.send("freq", [1000]);
+		Pd.send("speed", [1000]);
 	}
 	else{
 		if (opach <= 255) {
@@ -105,8 +107,7 @@ function mouseClicked() {
 		play = !play;
 		if (play) {
 			Pd.start();
-			Pd.send("freq", [1000]);
-			Pd.send("speed", [1000]);
+			
 		}else{
 			Pd.stop();
 		}
