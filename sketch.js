@@ -103,5 +103,10 @@ function mouse_over(shape) {
 function mouseClicked() {
 	if (start.pressed_or_clicked()) {
 		play = !play;
+		if (play) {
+			Pd.start();
+		}else{
+			Pd.stop();
+		}
 	}
 }
