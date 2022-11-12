@@ -105,6 +105,8 @@ function mouseClicked() {
 		play = !play;
 		if (play) {
 			Pd.start();
+			Pd.send("freq", [1000]);
+			Pd.send("speed", [1000]);
 		}else{
 			Pd.stop();
 		}
