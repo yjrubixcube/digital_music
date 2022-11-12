@@ -13,6 +13,11 @@ function move_mouth() {
 	main_figure = loadImage("images/test.png");
 }
 
+function render_buttons(x_pos, y_pos, width, height, color) {
+	fill(color);
+	rect(x_pos, y_pos, width, height);
+}
+
 function setup() {
 	createCanvas(screen[0], screen[1]);
 	// fill(0, 255, 255);
@@ -38,5 +43,7 @@ function draw() {
 	}
 
 	image(main_figure, mouseX, mouseY, cur_width, cur_height);
+
+	render_buttons(400, 200, 100, 300, 125);
 
 }
