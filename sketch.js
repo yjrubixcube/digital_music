@@ -6,7 +6,6 @@ let screen = [1080, 540];
 // bar vars const
 let bar_x = 440, bar_y = 500;
 let bar_width = 200, bar_height = 10;
-// let bar = [bar_x, bar_y, bar_width, bar_height];
 
 // img vars
 let main_figure, sound_figure;
@@ -14,7 +13,6 @@ let main_figure, sound_figure;
 // button vars
 let button_x = 525, button_y = 455;
 let button_width = 30, button_height = 100;
-// let button = [button_x, button_y, button_width, button_height];
 
 class Rectangle {
 	constructor(x, y, width, height) {
@@ -69,7 +67,10 @@ function draw() {
 		if (button.pressed_or_clicked()) {
 			fill(color(255,0,0));
 			rect(200, 0, 200, 200);
-			button.x = mouseX - button.width/2;
+			if (mouseX > bar.x && mouseX < bar.x + bar.width){
+				button.x = mouseX - button.width/2;
+			}
+			
 		}
 	}
 
