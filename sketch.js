@@ -42,6 +42,14 @@ class Slider {
 		this.bar = bar;
 		this.butt = butt;
 	}
+
+	get_val() {
+		var ret = this.butt.x + this.butt.width/2 - this.bar.x;
+		ret /= this.bar.width;
+		ret *= 1900;
+		ret += 100;
+		return ret;
+	}
 }
 
 let bar = new Rectangle(bar_x, bar_y, bar_width, bar_height);
@@ -128,8 +136,8 @@ function mouseClicked() {
 	if (start_button.pressed_or_clicked() && !play) {
 		play = true;
 		Pd.start();
-		Pd.send("freq", [1000]);
-		Pd.send("speed", [1000]);
+		Pd.send("freq", [freq_slider.get_val()]);
+		Pd.send("speed", [speed_slider.get_val()]);
 	}
 	if (stop_button.pressed_or_clicked() && play) {
 		play = false;
