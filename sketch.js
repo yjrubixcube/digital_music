@@ -37,9 +37,22 @@ class Rectangle {
 	}
 }
 
+class Slider {
+	constructor(bar, butt) {
+		this.bar = bar;
+		this.butt = butt;
+	}
+}
+
 let bar = new Rectangle(bar_x, bar_y, bar_width, bar_height);
 let button = new Rectangle(button_x, button_y, button_width, button_height);
-let start = new Rectangle(200, 500, 40, 40);
+let bar2 = new Rectangle(bar_x + 2*bar_width, bar_y, bar_width, bar_height);
+let but2 = new Rectangle(button_x + 2*bar_width, button_y, button_width, button_height);
+
+let freq_slider = new Slider(bar, button);
+let speed_slider = new Slider(bar2, but2);
+let start_button = new Rectangle(200, 500, 40, 40);
+let stop_button = new Rectangle(300, 500, 40, 40);
 
 function setup() {
 	createCanvas(screen[0], screen[1]);
@@ -58,17 +71,26 @@ function draw() {
 	image(main_figure, 0, 0, width, height, 0, 0, main_figure.width, main_figure.height, COVER);
 	tint(255, 255-opach);
 	image(sound_figure, 0, 0, width, height, 0, 0, sound_figure.width, sound_figure.height, COVER);
-	start.render(color(0, 255, 0));
+	start_button.render(color(0, 255, 0));
+	stop_button.render(color(255, 0, 0));
 	// change statement to pd things
 	if (mouseIsPressed) {
 		// play = !play;
 		fill(color(255,255,0));
 		rect(0, 0, 200, 200);
-		if (button.pressed_or_clicked()) {
+		if (freq_slider.butt.pressed_or_clicked()) {
 			fill(color(255,0,0));
 			rect(200, 0, 200, 200);
-			if (mouseX > bar.x && mouseX < bar.x + bar.width){
-				button.x = mouseX - button.width/2;
+			if (mouseX > freq_slider.bar.x && mouseX < freq_slider.bar.x + freq_slider.bar.width){
+				freq_slider.butt.x = mouseX - freq_slider.butt.width/2;
+			}
+			
+		}
+		if (speed_slider.butt.pressed_or_clicked()) {
+			fill(color(255,0,0));
+			rect(200, 0, 200, 200);
+			if (mouseX > speed_slider.bar.x && mouseX < speed_slider.bar.x + speed_slider.bar.width){
+				speed_slider.butt.x = mouseX - speed_slider.butt.width/2;
 			}
 			
 		}
@@ -85,8 +107,10 @@ function draw() {
 		}
 	}
 	
-	bar.render(color(0));
-	button.render(color(255, 0, 0));
+	freq_slider.bar.render(color(0));
+	freq_slider.butt.render(color(255, 0, 0));
+	speed_slider.bar.render(color(0));
+	speed_slider.butt.render(color(255, 0, 0));
 
 }
 
@@ -101,14 +125,14 @@ function mouse_over(shape) {
 
 
 function mouseClicked() {
-	if (start.pressed_or_clicked()) {
-		play = !play;
-		if (play) {
-			Pd.start();
-			Pd.send("freq", [1000]);
-			Pd.send("speed", [1000]);
-		}else{
-			Pd.stop();
-		}
+	if (start_button.pressed_or_clicked() && !play) {
+		play = true;
+		Pd.start();
+		Pd.send("freq", [1000]);
+		Pd.send("speed", [1000]);
+	}
+	if (stop_button.pressed_or_clicked() && play) {
+		play = false;
+		Pd.stop();
 	}
 }
