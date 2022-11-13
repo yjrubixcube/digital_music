@@ -62,6 +62,10 @@ let speed_slider = new Slider(bar2, but2);
 let start_button = new Rectangle(200, 500, 40, 40);
 let stop_button = new Rectangle(300, 500, 40, 40);
 
+let start_frame;
+let freq;
+let speed;
+
 function setup() {
 	createCanvas(screen[0], screen[1]);
 
@@ -83,7 +87,6 @@ function draw() {
 	stop_button.render(color(255, 0, 0));
 	// change statement to pd things
 	if (mouseIsPressed) {
-		// play = !play;
 		fill(color(255,255,0));
 		rect(0, 0, 200, 200);
 		if (freq_slider.butt.pressed_or_clicked()) {
@@ -104,14 +107,14 @@ function draw() {
 		}
 	}
 
-	if (play) {
+	if (play && ((frameCount - start_frame) % (speed / 1000 * 60) < 60 * (freq / 1000))) {
 		if (opach >= 0) {
-			opach -= 15;
+			opach -= 45;
 		}
 	}
 	else{
 		if (opach <= 255) {
-			opach += 15;
+			opach += 45;
 		}
 	}
 	
@@ -138,6 +141,10 @@ function mouseClicked() {
 		Pd.start();
 		Pd.send("freq", [freq_slider.get_val()]);
 		Pd.send("speed", [speed_slider.get_val()]);
+
+		start_frame = frameCount;
+		freq = freq_slider.get_val();
+		speed = speed_slider.get_val();
 	}
 	if (stop_button.pressed_or_clicked() && play) {
 		play = false;
