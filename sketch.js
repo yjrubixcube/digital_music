@@ -112,7 +112,7 @@ function draw() {
 		}
 	}
 
-	if (play && ((frameCount - start_frame) % (speed / 20) < (freq / 20) - 10)) {
+	if (play && ((frameCount - start_frame) % (speed / 1000 * 60) < (freq / 1000 * 60) - 10)) {
 		if (opach >= 0) {
 			opach -= 51;
 		}
@@ -150,8 +150,6 @@ function mouseClicked() {
 		start_frame = frameCount;
 		freq = freq_slider.get_val();
 		speed = speed_slider.get_val();
-		// console.log(freq, speed);
-		// print(speed);
 		if (freq > speed) {
 			freq = speed;
 		}
