@@ -46,8 +46,11 @@ class Slider {
 	get_val() {
 		var ret = this.butt.x + this.butt.width/2 - this.bar.x;
 		ret /= this.bar.width;
-		ret *= 1900;
-		ret += 100;
+		// ret *= 1900;
+		// ret += 100;
+
+		ret = map(ret, 0, 1, 5, 95);
+		ret *= 20;
 		return ret;
 	}
 }
@@ -68,6 +71,8 @@ let speed;
 
 function setup() {
 	createCanvas(screen[0], screen[1]);
+
+	frameRate(50);
 
 	main_figure = loadImage("images/beast_waiting.jpg");
 	sound_figure = loadImage("images/beast_roar.jpg");
@@ -107,14 +112,14 @@ function draw() {
 		}
 	}
 
-	if (play && ((frameCount - start_frame) % (speed / 1000 * 60) < 60 * (freq / 1000))) {
+	if (play && ((frameCount - start_frame) % (speed / 20) < (freq / 20) - 10)) {
 		if (opach >= 0) {
-			opach -= 45;
+			opach -= 51;
 		}
 	}
 	else{
 		if (opach <= 255) {
-			opach += 45;
+			opach += 51;
 		}
 	}
 	
@@ -145,6 +150,11 @@ function mouseClicked() {
 		start_frame = frameCount;
 		freq = freq_slider.get_val();
 		speed = speed_slider.get_val();
+		// console.log(freq, speed);
+		// print(speed);
+		if (freq > speed) {
+			freq = speed;
+		}
 	}
 	if (stop_button.pressed_or_clicked() && play) {
 		play = false;
