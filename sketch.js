@@ -57,7 +57,7 @@ class Slider {
 	}
 }
 
-class char_button {
+class my_button {
 	constructor(x, y, width, height, img) {
 		this.x = x;
 		this.y = y;
@@ -87,9 +87,9 @@ let but2 = new Rectangle(button_x + 2*bar_width, button_y, button_width, button_
 
 let freq_slider = new Slider(bar, button);
 let speed_slider = new Slider(bar2, but2);
-let start_button = new Rectangle(screen[0]/20, screen[1] - 40 -20, 40, 40);
-let stop_button = new Rectangle(screen[0]/20 + 100, screen[1] - 40 -20, 40, 40);
-let random_button = new Rectangle(100, 500, 40, 40);
+let start_button = new Rectangle(screen[0]/20, screen[1] - 60, 40, 40);
+let stop_button = new Rectangle(screen[0]/20 + 100, screen[1] - 60, 40, 40);
+let random_button = new Rectangle(screen[0]/20 + 250, screen[1] - 60, 40, 40);
 let select_char = [];
 
 let start_frame;
@@ -102,12 +102,12 @@ function setup() {
 	frameRate(50);
 
 	main_figure.push(loadImage("images/beast_waiting.jpg"));
-	main_figure.push(loadImage("images/billy_start.jpg"));
+	main_figure.push(loadImage("images/billy_yee.jpg"));
 	sound_figure.push(loadImage("images/beast_roar.jpg"));
-	sound_figure.push(loadImage("images/billy_yee.jpg"));
+	sound_figure.push(loadImage("images/billy_start.jpg"));
 
-	select_char.push(new char_button(50, screen[1] - 140, 50, 40, main_figure[0]));
-	select_char.push(new char_button(170, screen[1] - 140, 50, 40, main_figure[1]));
+	select_char.push(new my_button(50, screen[1] - 140, 50, 40, main_figure[0]));
+	select_char.push(new my_button(170, screen[1] - 140, 50, 40, main_figure[1]));
 	
 }
 
@@ -145,14 +145,14 @@ function draw() {
 	}
 
 	if(rplay && (frameCount - start_frame) % 15 == 0){
-		freq = random(500, 1500);
+		freq = random(400, 1600);
 		speed = 250;
 		Pd.send("freq", [freq]);
 		Pd.send("speed", [speed]);
 	}
 
 	if ((play && ((frameCount - start_frame) % (speed / 1000 * 60) < (min(freq, speed) / 1000 * 60) - 10)) ||
-		(rplay && (frameCount - start_frame) % 15 <= 5)) {
+		(rplay && (frameCount - start_frame) % 15 <= 8)) {
 		if (opach >= 0) {
 			opach -= 200;
 
