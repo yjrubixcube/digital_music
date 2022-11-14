@@ -48,11 +48,11 @@ class Slider {
 	get_val() {
 		var ret = this.butt.x + this.butt.width/2 - this.bar.x;
 		ret /= this.bar.width;
-		// ret *= 1900;
-		// ret += 100;
 
 		ret = map(ret, 0, 1, 5, 95);
 		ret *= 20;
+		if(ret < 300)	ret = 300;
+		ret -= 100;
 		return ret;
 	}
 }
@@ -87,9 +87,11 @@ let but2 = new Rectangle(button_x + 2*bar_width, button_y, button_width, button_
 
 let freq_slider = new Slider(bar, button);
 let speed_slider = new Slider(bar2, but2);
-let start_button = new Rectangle(screen[0]/20, screen[1] - 60, 40, 40);
-let stop_button = new Rectangle(screen[0]/20 + 100, screen[1] - 60, 40, 40);
-let random_button = new Rectangle(screen[0]/20 + 250, screen[1] - 60, 40, 40);
+let ho_button = new Rectangle(screen[0]/20, screen[1] - 90, 40, 40);
+let huh_button = new Rectangle(screen[0]/20 - 40, screen[1] - 40, 40, 40);
+let ah_button = new Rectangle(screen[0]/20 + 40, screen[1] - 40, 40, 40);
+let stop_button = new Rectangle(screen[0]/20 + 150, screen[1] - 60, 40, 40);
+let random_button = new Rectangle(screen[0]/20 + 300, screen[1] - 60, 40, 40);
 let select_char = [];
 
 let start_frame;
@@ -122,7 +124,9 @@ function draw() {
 	image(main_figure[character], 0, 0, width, height, 0, 0, main_figure[character].width, main_figure[character].height, COVER); //COVER or CONTAIN
 	tint(255, 255-opach);
 	image(sound_figure[character], 0, 0, width, height, 0, 0, sound_figure[character].width, sound_figure[character].height, COVER);
-	start_button.render(color(0, 255, 0));
+	ho_button.render(color(0, 255, 0));
+	huh_button.render(color(0, 255, 0));
+	ah_button.render(color(0, 255, 0));
 	stop_button.render(color(255, 0, 0));
 	random_button.render(color(0, 0, 255));
 	noTint();
@@ -147,6 +151,7 @@ function draw() {
 	if(rplay && (frameCount - start_frame) % 15 == 0){
 		freq = random(400, 1600);
 		speed = 250;
+		Pd.send("type", [random(0, 3)]);
 		Pd.send("freq", [freq]);
 		Pd.send("speed", [speed]);
 	}
@@ -187,19 +192,42 @@ function mouse_over(shape) {
 
 
 function mouseClicked() {
-	if (start_button.pressed_or_clicked() && !play) {
+	if (ho_button.pressed_or_clicked() && !play) {
 		play = true;
 		Pd.start();
 
 		start_frame = frameCount;
 		freq = freq_slider.get_val();
 		speed = speed_slider.get_val();
+		Pd.send("type", [0]);
+		Pd.send("freq", [freq]);
+		Pd.send("speed", [speed]);
+	}
+	if (huh_button.pressed_or_clicked() && !play) {
+		play = true;
+		Pd.start();
+
+		start_frame = frameCount;
+		freq = freq_slider.get_val();
+		speed = speed_slider.get_val();
+		Pd.send("type", [1]);
+		Pd.send("freq", [freq]);
+		Pd.send("speed", [speed]);
+	}
+	if (ah_button.pressed_or_clicked() && !play) {
+		play = true;
+		Pd.start();
+
+		start_frame = frameCount;
+		freq = freq_slider.get_val();
+		speed = speed_slider.get_val();
+		Pd.send("type", [2]);
 		Pd.send("freq", [freq]);
 		Pd.send("speed", [speed]);
 	}
 	if (stop_button.pressed_or_clicked() && (play || rplay)) {
 		play = false;
-		rplay = false
+		rplay = false;
 		Pd.stop();
 	}
 	if (random_button.pressed_or_clicked() && !play) {
