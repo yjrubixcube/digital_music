@@ -8,7 +8,8 @@ let bar_x = 440, bar_y = 500;
 let bar_width = 200, bar_height = 10;
 
 // img vars
-let main_figure, sound_figure;
+let main_figure=[], sound_figure=[];
+let character = 0;
 
 // button vars
 let button_x = 525, button_y = 455;
@@ -55,6 +56,29 @@ class Slider {
 	}
 }
 
+class char_button {
+	constructor(x, y, width, height, img) {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		this.img = img;
+	}
+
+	pressed_or_clicked() {
+		if (mouse_over(this)){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	render() {
+		image(this.img, this.x, this.y, this.width, this.height, 0, 0, this.img.width, this.img.height, COVER);
+	}
+}
+
 let bar = new Rectangle(bar_x, bar_y, bar_width, bar_height);
 let button = new Rectangle(button_x, button_y, button_width, button_height);
 let bar2 = new Rectangle(bar_x + 2*bar_width, bar_y, bar_width, bar_height);
@@ -64,6 +88,7 @@ let freq_slider = new Slider(bar, button);
 let speed_slider = new Slider(bar2, but2);
 let start_button = new Rectangle(200, 500, 40, 40);
 let stop_button = new Rectangle(300, 500, 40, 40);
+let select_char = [];
 
 let start_frame;
 let freq;
@@ -74,8 +99,14 @@ function setup() {
 
 	frameRate(50);
 
-	main_figure = loadImage("images/beast_waiting.jpg");
-	sound_figure = loadImage("images/beast_roar.jpg");
+	main_figure.push(loadImage("images/beast_waiting.jpg"));
+	main_figure.push(loadImage("images/billy_start.jpg"));
+	sound_figure.push(loadImage("images/beast_roar.jpg"));
+	sound_figure.push(loadImage("images/billy_yee.jpg"));
+
+	select_char.push(new char_button(50, 440, 50, 40, main_figure[0]));
+	select_char.push(new char_button(170, 440, 50, 40, main_figure[1]));
+	
 }
 
 let play = false;
@@ -85,26 +116,23 @@ function draw() {
 	background(255);
 
 	tint(255, opach);
-	image(main_figure, 0, 0, width, height, 0, 0, main_figure.width, main_figure.height, COVER);
+	image(main_figure[character], 0, 0, width, height, 0, 0, main_figure[character].width, main_figure[character].height, COVER);
 	tint(255, 255-opach);
-	image(sound_figure, 0, 0, width, height, 0, 0, sound_figure.width, sound_figure.height, COVER);
+	image(sound_figure[character], 0, 0, width, height, 0, 0, sound_figure[character].width, sound_figure[character].height, COVER);
 	start_button.render(color(0, 255, 0));
 	stop_button.render(color(255, 0, 0));
+	noTint();
+	select_char[0].render();
+	select_char[1].render();
 	// change statement to pd things
 	if (mouseIsPressed) {
-		fill(color(255,255,0));
-		rect(0, 0, 200, 200);
 		if (freq_slider.butt.pressed_or_clicked()) {
-			fill(color(255,0,0));
-			rect(200, 0, 200, 200);
 			if (mouseX > freq_slider.bar.x && mouseX < freq_slider.bar.x + freq_slider.bar.width){
 				freq_slider.butt.x = mouseX - freq_slider.butt.width/2;
 			}
 			
 		}
 		if (speed_slider.butt.pressed_or_clicked()) {
-			fill(color(255,0,0));
-			rect(200, 0, 200, 200);
 			if (mouseX > speed_slider.bar.x && mouseX < speed_slider.bar.x + speed_slider.bar.width){
 				speed_slider.butt.x = mouseX - speed_slider.butt.width/2;
 			}
@@ -157,5 +185,12 @@ function mouseClicked() {
 	if (stop_button.pressed_or_clicked() && play) {
 		play = false;
 		Pd.stop();
+	}
+
+	for (let i = 0; i<select_char.length; i++){
+		if (select_char[i].pressed_or_clicked() && !play){
+			character = i;
+			break;
+		}
 	}
 }
