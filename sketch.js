@@ -90,6 +90,7 @@ let speed_slider = new Slider(bar2, but2);
 let ho_button = new Rectangle(screen[0]/20, screen[1] - 90, 40, 40);
 let huh_button = new Rectangle(screen[0]/20 - 40, screen[1] - 40, 40, 40);
 let ah_button = new Rectangle(screen[0]/20 + 40, screen[1] - 40, 40, 40);
+let start_image;
 let stop_button = new Rectangle(screen[0]/20 + 150, screen[1] - 60, 40, 40);
 let random_button = new Rectangle(screen[0]/20 + 300, screen[1] - 60, 40, 40);
 let select_char = [];
@@ -104,18 +105,29 @@ function setup() {
 	frameRate(50);
 
 	main_figure.push(loadImage("images/beast_waiting.jpg"));
-	main_figure.push(loadImage("images/billy_yee.jpg"));
-	sound_figure.push(loadImage("images/beast_roar.jpg"));
-	sound_figure.push(loadImage("images/billy_start.jpg"));
+	main_figure.push(loadImage("images/billy_start.jpg"));
+	for(let i = 0;i < 3;i++){
+		sound_figure.push([]);
+	}
+	sound_figure[0].push(loadImage("images/beast_roar.jpg"));
+	sound_figure[0].push(loadImage("images/beast_roar.jpg"));
+	sound_figure[0].push(loadImage("images/beast_roar.jpg"));
+	sound_figure[1].push(loadImage("images/billy_ho.jpg"));
+	sound_figure[1].push(loadImage("images/billy_yee.jpg"));
+	sound_figure[1].push(loadImage("images/billy_roar.jpg"));
 
 	select_char.push(new my_button(50, screen[1] - 140, 50, 40, main_figure[0]));
 	select_char.push(new my_button(170, screen[1] - 140, 50, 40, main_figure[1]));
+
+	//start_image = loadImage("images/play.png");
+	//start_button = new my_button(screen[0]/20, screen[1] - 60, 40, 40, start_image);
 	
 }
 
 let play = false;
 let rplay = false;
 let opach = 0;
+let s_type = 0;
 
 function draw() {
 	background(255);
@@ -123,7 +135,7 @@ function draw() {
 	tint(255, opach);
 	image(main_figure[character], 0, 0, width, height, 0, 0, main_figure[character].width, main_figure[character].height, COVER); //COVER or CONTAIN
 	tint(255, 255-opach);
-	image(sound_figure[character], 0, 0, width, height, 0, 0, sound_figure[character].width, sound_figure[character].height, COVER);
+	image(sound_figure[character][s_type], 0, 0, width, height, 0, 0, sound_figure[character][s_type].width, sound_figure[character][s_type].height, COVER);
 	ho_button.render(color(0, 255, 0));
 	huh_button.render(color(0, 255, 0));
 	ah_button.render(color(0, 255, 0));
@@ -199,6 +211,7 @@ function mouseClicked() {
 		start_frame = frameCount;
 		freq = freq_slider.get_val();
 		speed = speed_slider.get_val();
+		s_type = 0;
 		Pd.send("type", [0]);
 		Pd.send("freq", [freq]);
 		Pd.send("speed", [speed]);
@@ -210,6 +223,7 @@ function mouseClicked() {
 		start_frame = frameCount;
 		freq = freq_slider.get_val();
 		speed = speed_slider.get_val();
+		s_type = 1;
 		Pd.send("type", [1]);
 		Pd.send("freq", [freq]);
 		Pd.send("speed", [speed]);
@@ -221,6 +235,7 @@ function mouseClicked() {
 		start_frame = frameCount;
 		freq = freq_slider.get_val();
 		speed = speed_slider.get_val();
+		s_type = 2;
 		Pd.send("type", [2]);
 		Pd.send("freq", [freq]);
 		Pd.send("speed", [speed]);
@@ -247,10 +262,5 @@ function mouseClicked() {
 
 function min(a, b){
 	if(a <= b) return a;
-	else return b;
-}
-
-function max(a, b){
-	if(a >= b) return a;
 	else return b;
 }
