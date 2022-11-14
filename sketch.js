@@ -87,7 +87,9 @@ let but2 = new Rectangle(button_x + 2*bar_width, button_y, button_width, button_
 
 let freq_slider = new Slider(bar, button);
 let speed_slider = new Slider(bar2, but2);
-let start_button = new Rectangle(screen[0]/20, screen[1] - 60, 40, 40);
+// let start_button = new Rectangle(screen[0]/20, screen[1] - 60, 40, 40);
+let start_image;
+let start_button;
 let stop_button = new Rectangle(screen[0]/20 + 100, screen[1] - 60, 40, 40);
 let random_button = new Rectangle(screen[0]/20 + 250, screen[1] - 60, 40, 40);
 let select_char = [];
@@ -102,12 +104,15 @@ function setup() {
 	frameRate(50);
 
 	main_figure.push(loadImage("images/beast_waiting.jpg"));
-	main_figure.push(loadImage("images/billy_yee.jpg"));
+	main_figure.push(loadImage("images/billy_start.jpg"));
 	sound_figure.push(loadImage("images/beast_roar.jpg"));
-	sound_figure.push(loadImage("images/billy_start.jpg"));
+	sound_figure.push(loadImage("images/billy_roar.jpg"));
 
 	select_char.push(new my_button(50, screen[1] - 140, 50, 40, main_figure[0]));
 	select_char.push(new my_button(170, screen[1] - 140, 50, 40, main_figure[1]));
+
+	start_image = loadImage("images/play.png");
+	start_button = new my_button(screen[0]/20, screen[1] - 60, 40, 40, start_image);
 	
 }
 
@@ -122,12 +127,14 @@ function draw() {
 	image(main_figure[character], 0, 0, width, height, 0, 0, main_figure[character].width, main_figure[character].height, COVER); //COVER or CONTAIN
 	tint(255, 255-opach);
 	image(sound_figure[character], 0, 0, width, height, 0, 0, sound_figure[character].width, sound_figure[character].height, COVER);
-	start_button.render(color(0, 255, 0));
+	
+	// image(start_button, screen[0]/20, screen[1] - 60, 0, 0, start_button.width, start_button.height, COVER);
 	stop_button.render(color(255, 0, 0));
 	random_button.render(color(0, 0, 255));
 	noTint();
 	select_char[0].render();
 	select_char[1].render();
+	start_button.render();
 	// change statement to pd things
 	if (mouseIsPressed) {
 		if (freq_slider.butt.pressed_or_clicked()) {
