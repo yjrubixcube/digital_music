@@ -4,16 +4,17 @@
 let screen = [1280, 720];
 
 // bar vars const
-let bar_x = 440, bar_y = 500;
+let button_width = 30, button_height = 100;
 let bar_width = 200, bar_height = 10;
+let bar_x = screen[0]/2 - bar_width/2, bar_y = screen[1] - button_height/2 - 5;
+let button_x = screen[0]/2 - button_width/2, button_y = screen[1] - button_height - 5;
+
 
 // img vars
 let main_figure=[], sound_figure=[];
 let character = 0;
 
-// button vars
-let button_x = 525, button_y = 455;
-let button_width = 30, button_height = 100;
+
 
 class Rectangle {
 	constructor(x, y, width, height) {
@@ -86,8 +87,8 @@ let but2 = new Rectangle(button_x + 2*bar_width, button_y, button_width, button_
 
 let freq_slider = new Slider(bar, button);
 let speed_slider = new Slider(bar2, but2);
-let start_button = new Rectangle(200, 500, 40, 40);
-let stop_button = new Rectangle(300, 500, 40, 40);
+let start_button = new Rectangle(screen[0]/20, screen[1] - 40 -20, 40, 40);
+let stop_button = new Rectangle(screen[0]/20 + 100, screen[1] - 40 -20, 40, 40);
 let random_button = new Rectangle(100, 500, 40, 40);
 let select_char = [];
 
@@ -105,8 +106,8 @@ function setup() {
 	sound_figure.push(loadImage("images/beast_roar.jpg"));
 	sound_figure.push(loadImage("images/billy_yee.jpg"));
 
-	select_char.push(new char_button(50, 440, 50, 40, main_figure[0]));
-	select_char.push(new char_button(170, 440, 50, 40, main_figure[1]));
+	select_char.push(new char_button(50, screen[1] - 140, 50, 40, main_figure[0]));
+	select_char.push(new char_button(170, screen[1] - 140, 50, 40, main_figure[1]));
 	
 }
 
@@ -118,7 +119,7 @@ function draw() {
 	background(255);
 
 	tint(255, opach);
-	image(main_figure[character], 0, 0, width, height, 0, 0, main_figure[character].width, main_figure[character].height, COVER);
+	image(main_figure[character], 0, 0, width, height, 0, 0, main_figure[character].width, main_figure[character].height, COVER); //COVER or CONTAIN
 	tint(255, 255-opach);
 	image(sound_figure[character], 0, 0, width, height, 0, 0, sound_figure[character].width, sound_figure[character].height, COVER);
 	start_button.render(color(0, 255, 0));
