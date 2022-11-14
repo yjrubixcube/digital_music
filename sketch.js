@@ -1,7 +1,7 @@
 // const { memoryUsage } = require("process");
 
 // global vars
-let screen = [1080, 540];
+let screen = [1280, 720];
 
 // bar vars const
 let bar_x = 440, bar_y = 500;
@@ -88,6 +88,7 @@ let freq_slider = new Slider(bar, button);
 let speed_slider = new Slider(bar2, but2);
 let start_button = new Rectangle(200, 500, 40, 40);
 let stop_button = new Rectangle(300, 500, 40, 40);
+let random_button = new Rectangle(100, 500, 40, 40);
 let select_char = [];
 
 let start_frame;
@@ -110,6 +111,7 @@ function setup() {
 }
 
 let play = false;
+let rplay = false;
 let opach = 0;
 
 function draw() {
@@ -121,6 +123,7 @@ function draw() {
 	image(sound_figure[character], 0, 0, width, height, 0, 0, sound_figure[character].width, sound_figure[character].height, COVER);
 	start_button.render(color(0, 255, 0));
 	stop_button.render(color(255, 0, 0));
+	random_button.render(color(0, 0, 255));
 	noTint();
 	select_char[0].render();
 	select_char[1].render();
@@ -140,14 +143,28 @@ function draw() {
 		}
 	}
 
-	if (play && ((frameCount - start_frame) % (speed / 1000 * 60) < (freq / 1000 * 60) - 10)) {
+	if(rplay && (frameCount - start_frame) % 15 == 0){
+		freq = random(500, 1500);
+		speed = 250;
+		Pd.send("freq", [freq]);
+		Pd.send("speed", [speed]);
+	}
+
+	if ((play && ((frameCount - start_frame) % (speed / 1000 * 60) < (min(freq, speed) / 1000 * 60) - 10)) ||
+		(rplay && (frameCount - start_frame) % 15 <= 5)) {
 		if (opach >= 0) {
-			opach -= 51;
+			opach -= 200;
+
+			if(opach < 0)
+				opach = 0;
 		}
 	}
 	else{
 		if (opach <= 255) {
-			opach += 51;
+			opach += 200;
+
+			if(opach > 255)
+				opach = 255;
 		}
 	}
 	
@@ -172,19 +189,23 @@ function mouseClicked() {
 	if (start_button.pressed_or_clicked() && !play) {
 		play = true;
 		Pd.start();
-		Pd.send("freq", [freq_slider.get_val()]);
-		Pd.send("speed", [speed_slider.get_val()]);
 
 		start_frame = frameCount;
 		freq = freq_slider.get_val();
 		speed = speed_slider.get_val();
-		if (freq > speed) {
-			freq = speed;
-		}
+		Pd.send("freq", [freq]);
+		Pd.send("speed", [speed]);
 	}
-	if (stop_button.pressed_or_clicked() && play) {
+	if (stop_button.pressed_or_clicked() && (play || rplay)) {
 		play = false;
+		rplay = false
 		Pd.stop();
+	}
+	if (random_button.pressed_or_clicked() && !play) {
+		rplay = true;
+		Pd.start();
+
+		start_frame = frameCount;
 	}
 
 	for (let i = 0; i<select_char.length; i++){
@@ -193,4 +214,14 @@ function mouseClicked() {
 			break;
 		}
 	}
+}
+
+function min(a, b){
+	if(a <= b) return a;
+	else return b;
+}
+
+function max(a, b){
+	if(a >= b) return a;
+	else return b;
 }
