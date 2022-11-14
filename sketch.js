@@ -106,18 +106,23 @@ function setup() {
 
 	main_figure.push(loadImage("images/beast_waiting.jpg"));
 	main_figure.push(loadImage("images/billy_start.jpg"));
+	main_figure.push(loadImage("images/wen_start.jpg"));
 	for(let i = 0;i < 3;i++){
 		sound_figure.push([]);
 	}
-	sound_figure[0].push(loadImage("images/beast_roar.jpg"));
-	sound_figure[0].push(loadImage("images/beast_roar.jpg"));
+	sound_figure[0].push(loadImage("images/beast_ho.jpg"));
+	sound_figure[0].push(loadImage("images/beast_huh.jpg"));
 	sound_figure[0].push(loadImage("images/beast_roar.jpg"));
 	sound_figure[1].push(loadImage("images/billy_ho.jpg"));
 	sound_figure[1].push(loadImage("images/billy_yee.jpg"));
 	sound_figure[1].push(loadImage("images/billy_roar.jpg"));
+	sound_figure[2].push(loadImage("images/wen_ho.jpg"));
+	sound_figure[2].push(loadImage("images/wen_yee.jpg"));
+	sound_figure[2].push(loadImage("images/wen_ah.jpg"));
 
 	select_char.push(new my_button(50, screen[1] - 140, 50, 40, main_figure[0]));
 	select_char.push(new my_button(170, screen[1] - 140, 50, 40, main_figure[1]));
+	select_char.push(new my_button(290, screen[1] - 140, 50, 40, main_figure[2]));
 
 	//start_image = loadImage("images/play.png");
 	//start_button = new my_button(screen[0]/20, screen[1] - 60, 40, 40, start_image);
@@ -144,6 +149,7 @@ function draw() {
 	noTint();
 	select_char[0].render();
 	select_char[1].render();
+	select_char[2].render();
 	// change statement to pd things
 	if (mouseIsPressed) {
 		if (freq_slider.butt.pressed_or_clicked()) {
@@ -163,7 +169,8 @@ function draw() {
 	if(rplay && (frameCount - start_frame) % 15 == 0){
 		freq = random(400, 1600);
 		speed = 250;
-		Pd.send("type", [random(0, 3)]);
+		s_type = random([0, 1, 2]);
+		Pd.send("type", [s_type]);
 		Pd.send("freq", [freq]);
 		Pd.send("speed", [speed]);
 	}
