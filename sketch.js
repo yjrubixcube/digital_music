@@ -167,12 +167,28 @@ function draw() {
 	}
 
 	if(rplay && (frameCount - start_frame) % 15 == 0){
+		Pd.send("vol0", [0]);
+		Pd.send("vol1", [0]);
+		Pd.send("vol2", [0]);
+		
 		freq = random(400, 1600);
 		speed = 250;
 		s_type = random([0, 1, 2]);
-		Pd.send("type", [s_type]);
-		Pd.send("freq", [freq]);
-		Pd.send("speed", [speed]);
+		if(s_type == 0){
+			Pd.send("freq0", [freq]);
+			Pd.send("speed0", [speed]);
+			Pd.send("vol0", [1]);
+		}
+		else if(s_type == 1){
+			Pd.send("freq1", [freq]);
+			Pd.send("speed1", [speed]);
+			Pd.send("vol1", [1]);
+		}
+		else if(s_type == 2){
+			Pd.send("freq2", [freq]);
+			Pd.send("speed2", [speed]);
+			Pd.send("vol2", [1]);
+		}
 	}
 
 	if ((play && ((frameCount - start_frame) % (speed / 1000 * 60) < (min(freq, speed) / 1000 * 60) - 10)) ||
@@ -219,9 +235,9 @@ function mouseClicked() {
 		freq = freq_slider.get_val();
 		speed = speed_slider.get_val();
 		s_type = 0;
-		Pd.send("type", [0]);
-		Pd.send("freq", [freq]);
-		Pd.send("speed", [speed]);
+		Pd.send("freq0", [freq]);
+		Pd.send("speed0", [speed]);
+		Pd.send("vol0", [1]);
 	}
 	if (huh_button.pressed_or_clicked() && !play) {
 		play = true;
@@ -231,9 +247,9 @@ function mouseClicked() {
 		freq = freq_slider.get_val();
 		speed = speed_slider.get_val();
 		s_type = 1;
-		Pd.send("type", [1]);
-		Pd.send("freq", [freq]);
-		Pd.send("speed", [speed]);
+		Pd.send("freq1", [freq]);
+		Pd.send("speed1", [speed]);
+		Pd.send("vol1", [1]);
 	}
 	if (ah_button.pressed_or_clicked() && !play) {
 		play = true;
@@ -243,13 +259,16 @@ function mouseClicked() {
 		freq = freq_slider.get_val();
 		speed = speed_slider.get_val();
 		s_type = 2;
-		Pd.send("type", [2]);
-		Pd.send("freq", [freq]);
-		Pd.send("speed", [speed]);
+		Pd.send("freq2", [freq]);
+		Pd.send("speed2", [speed]);
+		Pd.send("vol2", [1]);
 	}
 	if (stop_button.pressed_or_clicked() && (play || rplay)) {
 		play = false;
 		rplay = false;
+		Pd.send("vol0", [0]);
+		Pd.send("vol1", [0]);
+		Pd.send("vol2", [0]);
 		Pd.stop();
 	}
 	if (random_button.pressed_or_clicked() && !play) {
