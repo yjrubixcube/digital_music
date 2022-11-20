@@ -9,6 +9,10 @@ let bar_width = 200, bar_height = 10;
 let bar_x = screen[0]/2 - bar_width/2, bar_y = screen[1] - button_height/2 - 5;
 let button_x = screen[0]/2 - button_width/2, button_y = screen[1] - button_height - 5;
 
+// buffer_bar vars
+let buffer_bar_width = 1250, buffer_bar_height = 100;
+let buffer_bar_x = 10, buffer_bar_y = 10;
+
 
 // img vars
 let main_figure=[], sound_figure=[];
@@ -80,6 +84,16 @@ class my_button {
 	}
 }
 
+class State {
+	constructor(character, sound_type, freq, speed, volume) {
+		this.character = character;
+		this.sound_type = sound_type;
+		this.freq = freq;
+		this.speed = speed;
+		this.volume = volume;
+	}
+}
+
 let bar = new Rectangle(bar_x, bar_y, bar_width, bar_height);
 let button = new Rectangle(button_x, button_y, button_width, button_height);
 let bar2 = new Rectangle(bar_x + 2*bar_width, bar_y, bar_width, bar_height);
@@ -90,10 +104,13 @@ let speed_slider = new Slider(bar2, but2);
 let ho_button = new Rectangle(screen[0]/20, screen[1] - 90, 40, 40);
 let huh_button = new Rectangle(screen[0]/20 - 40, screen[1] - 40, 40, 40);
 let ah_button = new Rectangle(screen[0]/20 + 40, screen[1] - 40, 40, 40);
+let buffer_bar = new Rectangle(buffer_bar_x, buffer_bar_y, buffer_bar_width, buffer_bar_height);
+
 let start_image;
 let stop_button = new Rectangle(screen[0]/20 + 150, screen[1] - 60, 40, 40);
 let random_button = new Rectangle(screen[0]/20 + 300, screen[1] - 60, 40, 40);
 let select_char = [];
+let buffer = [];
 
 let start_frame;
 let freq;
@@ -146,7 +163,12 @@ function draw() {
 	ah_button.render(color(0, 255, 0));
 	stop_button.render(color(255, 0, 0));
 	random_button.render(color(0, 0, 255));
+	buffer_bar.render(color(127,127,127));
 	noTint();
+	for (let i = 0; i < buffer.length; i++){
+		image(sound_figure[buffer[i].character][buffer[i].sound_type], buffer_bar_x + 10 + i*(100+10), buffer_bar_y + 10, 100, 80, 0, 0, sound_figure[buffer[i].character][buffer[i].sound_type].width, sound_figure[buffer[i].character][buffer[i].sound_type].height, COVER); //100,80
+	}
+	
 	select_char[0].render();
 	select_char[1].render();
 	select_char[2].render();
@@ -228,6 +250,8 @@ function mouse_over(shape) {
 
 function mouseClicked() {
 	if (ho_button.pressed_or_clicked() && !play) {
+		buffer.push(new State(character, 0, freq_slider.get_val(), speed_slider.get_val(), 1));
+		/*
 		play = true;
 		Pd.start();
 
@@ -238,8 +262,11 @@ function mouseClicked() {
 		Pd.send("freq0", [freq]);
 		Pd.send("speed0", [speed]);
 		Pd.send("vol0", [1]);
+		*/
 	}
 	if (huh_button.pressed_or_clicked() && !play) {
+		buffer.push(new State(character, 1, freq_slider.get_val(), speed_slider.get_val(), 1));
+		/*
 		play = true;
 		Pd.start();
 
@@ -250,8 +277,11 @@ function mouseClicked() {
 		Pd.send("freq1", [freq]);
 		Pd.send("speed1", [speed]);
 		Pd.send("vol1", [1]);
+		*/
 	}
 	if (ah_button.pressed_or_clicked() && !play) {
+		buffer.push(new State(character, 2, freq_slider.get_val(), speed_slider.get_val(), 1));
+		/*
 		play = true;
 		Pd.start();
 
@@ -262,6 +292,7 @@ function mouseClicked() {
 		Pd.send("freq2", [freq]);
 		Pd.send("speed2", [speed]);
 		Pd.send("vol2", [1]);
+		*/
 	}
 	if (stop_button.pressed_or_clicked() && (play || rplay)) {
 		play = false;

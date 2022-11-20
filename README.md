@@ -6,3 +6,7 @@
 1. open `index.html` or `sketch.js`
 2. `alt+l` + `alt+o` or click `Go live` at the bottom
 3. open `127.0.0.1:5500/index.html` in browser
+
+## TODO
+1. add sound buffer
+2. add char select menu
