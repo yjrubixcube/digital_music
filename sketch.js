@@ -6,8 +6,8 @@ let screen = [1280, 720];
 // bar vars const
 let button_width = 30, button_height = 100;
 let bar_width = 200, bar_height = 10;
-let bar_x = screen[0]/2 - bar_width/2, bar_y = screen[1] - button_height/2 - 5;
-let button_x = screen[0]/2 - button_width/2, button_y = screen[1] - button_height - 5;
+let bar_x = screen[0]/2 - 150 - bar_width/2, bar_y = screen[1] - button_height/2 - 5;
+let button_x = screen[0]/2 - 150 - button_width/2, button_y = screen[1] - button_height - 5;
 
 // buffer_bar vars
 let buffer_bar_width = 1250, buffer_bar_height = 100;
@@ -38,7 +38,7 @@ class Rectangle {
 	}
 
 	render(col) {
-		fill(col);
+		fill(col, 127);
 		rect(this.x, this.y, this.width, this.height);
 	}
 }
@@ -50,7 +50,7 @@ class Slider {
 	}
 
 	get_val() {
-		var ret = this.butt.x + this.butt.width/2 - this.bar.x;
+		var ret = this.bar.x + this.bar.width - (this.butt.x + this.butt.width/2);
 		ret /= this.bar.width;
 
 		ret = map(ret, 0, 1, 5, 95);
@@ -96,21 +96,32 @@ class State {
 
 let bar = new Rectangle(bar_x, bar_y, bar_width, bar_height);
 let button = new Rectangle(button_x, button_y, button_width, button_height);
-let bar2 = new Rectangle(bar_x + 2*bar_width, bar_y, bar_width, bar_height);
-let but2 = new Rectangle(button_x + 2*bar_width, button_y, button_width, button_height);
+let bar2 = new Rectangle(bar_x + 1.3 * bar_width, bar_y, bar_width, bar_height);
+let but2 = new Rectangle(button_x + 1.3 * bar_width, button_y, button_width, button_height);
 
 let freq_slider = new Slider(bar, button);
 let speed_slider = new Slider(bar2, but2);
-let ho_button = new Rectangle(screen[0]/20, screen[1] - 90, 40, 40);
+/*let ho_button = new Rectangle(screen[0]/20, screen[1] - 90, 40, 40);
 let huh_button = new Rectangle(screen[0]/20 - 40, screen[1] - 40, 40, 40);
-let ah_button = new Rectangle(screen[0]/20 + 40, screen[1] - 40, 40, 40);
+let ah_button = new Rectangle(screen[0]/20 + 40, screen[1] - 40, 40, 40);*/
+let ho_button;
+let huh_button;
+let del_button;
+let ah_button;
 let buffer_bar = new Rectangle(buffer_bar_x, buffer_bar_y, buffer_bar_width, buffer_bar_height);
 
 let start_image;
-let stop_button = new Rectangle(screen[0]/20 + 150, screen[1] - 60, 40, 40);
-let random_button = new Rectangle(screen[0]/20 + 300, screen[1] - 60, 40, 40);
+let stop_image;
+let del_image;
+let random_image;
+//let stop_button = new Rectangle(screen[0]/20 + 150, screen[1] - 60, 40, 40);
+let start_button;
+let stop_button;
+let random_button;
+//let random_button = new Rectangle(screen[0]/20 + 300, screen[1] - 60, 40, 40);
 let select_char = [];
 let buffer = [];
+let butt_images = [];
 
 let start_frame;
 let freq;
@@ -141,8 +152,21 @@ function setup() {
 	select_char.push(new my_button(170, screen[1] - 140, 50, 40, main_figure[1]));
 	select_char.push(new my_button(290, screen[1] - 140, 50, 40, main_figure[2]));
 
-	//start_image = loadImage("images/play.png");
-	//start_button = new my_button(screen[0]/20, screen[1] - 60, 40, 40, start_image);
+	start_image = loadImage("images/play.png");
+	start_button = new my_button(screen[0] - 370, screen[1] - 120, 100, 100, start_image);
+	stop_image = loadImage("images/stop.png");
+	stop_button = new my_button(screen[0] - 240, screen[1] - 120, 100, 100, stop_image);
+	random_image = loadImage("images/weed.png");
+	random_button = new my_button(screen[0] - 110, screen[1] - 120, 100, 100, random_image);
+
+	butt_images.push(loadImage("images/HO.jpg"));
+	butt_images.push(loadImage("images/HE.jpg"));
+	butt_images.push(loadImage("images/AH.jpg"));
+	ho_button = new my_button(screen[0]/20, screen[1] - 90, 40, 40, butt_images[0]);
+	huh_button = new my_button(screen[0]/20 - 40, screen[1] - 40, 40, 40, butt_images[1]);
+	ah_button = new my_button(screen[0]/20 + 40, screen[1] - 40, 40, 40, butt_images[2]);
+	del_image = loadImage("images/del.jpg");
+	del_button = new my_button(screen[0]/20 + 150, screen[1] - 60, 40, 40, del_image);
 	
 }
 
@@ -151,6 +175,8 @@ let rplay = false;
 let opach = 0;
 let s_type = 0;
 
+let index;
+
 function draw() {
 	background(255);
 
@@ -158,16 +184,23 @@ function draw() {
 	image(main_figure[character], 0, 0, width, height, 0, 0, main_figure[character].width, main_figure[character].height, COVER); //COVER or CONTAIN
 	tint(255, 255-opach);
 	image(sound_figure[character][s_type], 0, 0, width, height, 0, 0, sound_figure[character][s_type].width, sound_figure[character][s_type].height, COVER);
-	ho_button.render(color(0, 255, 0));
-	huh_button.render(color(0, 255, 0));
-	ah_button.render(color(0, 255, 0));
-	stop_button.render(color(255, 0, 0));
-	random_button.render(color(0, 0, 255));
-	buffer_bar.render(color(127,127,127));
+	noTint();
+	start_button.render();
+	stop_button.render();
+	random_button.render();
+	ho_button.render();
+	huh_button.render();
+	ah_button.render();
+	del_button.render();
+	//stop_button.render(color(255, 0, 0));
+	//random_button.render(color(0, 0, 255));
+	buffer_bar.render(color(127,127,127, 127));
 	noTint();
 	for (let i = 0; i < buffer.length; i++){
-		image(sound_figure[buffer[i].character][buffer[i].sound_type], buffer_bar_x + 10 + i*(100+10), buffer_bar_y + 10, 100, 80, 0, 0, sound_figure[buffer[i].character][buffer[i].sound_type].width, sound_figure[buffer[i].character][buffer[i].sound_type].height, COVER); //100,80
+		tint(255, 191);
+		image(butt_images[buffer[i].sound_type], buffer_bar_x + 10 + i*(100+10), buffer_bar_y + 10, 100, 80, 0, 0, butt_images[buffer[i].sound_type].width, butt_images[buffer[i].sound_type].height, COVER); //100,80
 	}
+	noTint();
 	
 	select_char[0].render();
 	select_char[1].render();
@@ -185,6 +218,43 @@ function draw() {
 				speed_slider.butt.x = mouseX - speed_slider.butt.width/2;
 			}
 			
+		}
+	}
+	
+	if(play){
+		if(frameCount - start_frame >= buffer[index].speed / 1000 * 60){
+			start_frame = frameCount;
+			index = index + 1;
+		}
+
+		if(frameCount == start_frame){
+			Pd.send("vol0", [0]);
+			Pd.send("vol1", [0]);
+			Pd.send("vol2", [0]);
+			if(index < buffer.length){
+				freq = buffer[index].freq;
+				speed = buffer[index].speed;
+				if(s_type == 0){
+					Pd.send("freq0", [buffer[index].freq]);
+					Pd.send("speed0", [buffer[index].speed]);
+					Pd.send("vol0", [1]);
+				}
+				else if(s_type == 1){
+					Pd.send("freq1", [buffer[index].freq]);
+					Pd.send("speed1", [buffer[index].speed]);
+					Pd.send("vol1", [1]);
+				}
+				else if(s_type == 2){
+					Pd.send("freq2", [buffer[index].freq]);
+					Pd.send("speed2", [buffer[index].speed]);
+					Pd.send("vol2", [1]);
+				}
+			}
+			else{
+				buffer.length = 0;
+				play = false;
+				Pd.stop();
+			}
 		}
 	}
 
@@ -213,7 +283,7 @@ function draw() {
 		}
 	}
 
-	if ((play && ((frameCount - start_frame) % (speed / 1000 * 60) < (min(freq, speed) / 1000 * 60) - 10)) ||
+	if ((play && index < buffer.length && ((frameCount - start_frame) % (speed / 1000 * 60) < (min(freq, speed) / 1000 * 60) - 10)) ||
 		(rplay && (frameCount - start_frame) % 15 <= 8)) {
 		if (opach >= 0) {
 			opach -= 200;
@@ -249,7 +319,7 @@ function mouse_over(shape) {
 
 
 function mouseClicked() {
-	if (ho_button.pressed_or_clicked() && !play) {
+	if (ho_button.pressed_or_clicked() && !play && buffer.length < 11) {
 		buffer.push(new State(character, 0, freq_slider.get_val(), speed_slider.get_val(), 1));
 		/*
 		play = true;
@@ -264,7 +334,7 @@ function mouseClicked() {
 		Pd.send("vol0", [1]);
 		*/
 	}
-	if (huh_button.pressed_or_clicked() && !play) {
+	if (huh_button.pressed_or_clicked() && !play && buffer.length < 11) {
 		buffer.push(new State(character, 1, freq_slider.get_val(), speed_slider.get_val(), 1));
 		/*
 		play = true;
@@ -279,7 +349,7 @@ function mouseClicked() {
 		Pd.send("vol1", [1]);
 		*/
 	}
-	if (ah_button.pressed_or_clicked() && !play) {
+	if (ah_button.pressed_or_clicked() && !play && buffer.length < 11) {
 		buffer.push(new State(character, 2, freq_slider.get_val(), speed_slider.get_val(), 1));
 		/*
 		play = true;
@@ -294,7 +364,33 @@ function mouseClicked() {
 		Pd.send("vol2", [1]);
 		*/
 	}
+	if (del_button.pressed_or_clicked() && !play) {
+		buffer.pop();
+	}
+	if (start_button.pressed_or_clicked() && !play && !rplay && buffer.length) {
+		play = true;
+		index = 0;
+		start_frame = frameCount;
+		Pd.start();
+		s_type = buffer[index].sound_type;
+		if(s_type == 0){
+			Pd.send("freq0", [buffer[index].freq]);
+			Pd.send("speed0", [buffer[index].speed]);
+			Pd.send("vol0", [1]);
+		}
+		else if(s_type == 1){
+			Pd.send("freq1", [buffer[index].freq]);
+			Pd.send("speed1", [buffer[index].speed]);
+			Pd.send("vol1", [1]);
+		}
+		else if(s_type == 2){
+			Pd.send("freq2", [buffer[index].freq]);
+			Pd.send("speed2", [buffer[index].speed]);
+			Pd.send("vol2", [1]);
+		}
+	}
 	if (stop_button.pressed_or_clicked() && (play || rplay)) {
+		buffer.length = 0;
 		play = false;
 		rplay = false;
 		Pd.send("vol0", [0]);
