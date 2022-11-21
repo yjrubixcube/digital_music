@@ -1,5 +1,8 @@
 // const { memoryUsage } = require("process");
 
+let melody = [[5,0.25],[6,0.25],[10,0.25],[5,0.25],[30,0.75],[30,0.75],[20,1.5],[5,0.25],[6,0.25],[7,0.25],[5,0.25],[20,0.75],[20,0.75],[10,1.5]];
+let note = [0, 1054.94, 939.85, 837.31, 790.31, 704.09, 627.27, 558.84];
+
 // global vars
 let screen = [1280, 720];
 
@@ -116,10 +119,12 @@ let del_image;
 let random_image;
 let freq_image;
 let speed_image;
+let roll_image;
 //let stop_button = new Rectangle(screen[0]/20 + 150, screen[1] - 60, 40, 40);
 let start_button;
 let stop_button;
 let random_button;
+let roll_button;
 //let random_button = new Rectangle(screen[0]/20 + 300, screen[1] - 60, 40, 40);
 let select_char = [];
 let buffer = [];
@@ -160,6 +165,8 @@ function setup() {
 	stop_button = new my_button(screen[0] - 240, screen[1] - 120, 100, 100, stop_image);
 	random_image = loadImage("images/weed.png");
 	random_button = new my_button(screen[0] - 110, screen[1] - 120, 100, 100, random_image);
+	roll_image = loadImage("images/roll.jpg");
+	roll_button = new my_button(screen[0] - 110, screen[1] - 240, 100, 100, roll_image);
 
 	butt_images.push(loadImage("images/HO.jpg"));
 	butt_images.push(loadImage("images/HE.jpg"));
@@ -176,10 +183,12 @@ function setup() {
 
 let play = false;
 let rplay = false;
+let roll_play = false;
 let opach = 0;
 let s_type = 0;
 
 let index;
+let r_index;
 
 function draw() {
 	background(255);
@@ -192,6 +201,7 @@ function draw() {
 	start_button.render();
 	stop_button.render();
 	random_button.render();
+	roll_button.render();
 	ho_button.render();
 	huh_button.render();
 	ah_button.render();
@@ -288,6 +298,33 @@ function draw() {
 		}
 	}
 
+	if (roll_play){
+		if (frameCount - start_frame > speed / 1000 * 60) {
+			
+			r_index ++;
+			Pd.send("vol0", [0]);
+			Pd.send("vol1", [0]);
+			Pd.send("vol2", [0]);
+			if (r_index < melody.length) {
+				speed = melody[r_index][1]*1000;
+				if(melody[r_index][0]>=10){
+					freq = note[melody[r_index][0]/10]/2;
+				}
+				else{
+					freq = note[melody[r_index][0]];
+				}
+				Pd.send("freq0", [freq]);
+				Pd.send("speed0", [speed]);
+				Pd.send("vol0", [1]);
+				start_frame = frameCount;
+			}
+			else {
+				roll_play = false;
+				Pd.stop();
+			}
+		}
+	}
+
 	if ((play && index < buffer.length && ((frameCount - start_frame) % (speed / 1000 * 60) < (min(freq, speed) / 1000 * 60) - 10)) ||
 		(rplay && (frameCount - start_frame) % 15 <= 8)) {
 		if (opach >= 0) {
@@ -372,7 +409,7 @@ function mouseClicked() {
 	if (del_button.pressed_or_clicked() && !play) {
 		buffer.pop();
 	}
-	if (start_button.pressed_or_clicked() && !play && !rplay && buffer.length) {
+	if (start_button.pressed_or_clicked() && !play && !rplay && !roll_play && buffer.length) {
 		play = true;
 		index = 0;
 		Pd.start();
@@ -396,20 +433,38 @@ function mouseClicked() {
 		}
 		start_frame = frameCount;
 	}
-	if (stop_button.pressed_or_clicked() && (play || rplay)) {
+	if (stop_button.pressed_or_clicked() && (play || rplay || roll_play)) {
 		//buffer.length = 0;
 		play = false;
 		rplay = false;
+		roll_play = false;
 		Pd.send("vol0", [0]);
 		Pd.send("vol1", [0]);
 		Pd.send("vol2", [0]);
 		Pd.stop();
+		speed = 0;
 	}
-	if (random_button.pressed_or_clicked() && !play) {
+	if (random_button.pressed_or_clicked() && !play && !roll_play) {
 		rplay = true;
 		Pd.start();
 
 		start_frame = frameCount;
+	}
+	if (roll_button.pressed_or_clicked() && !play && !rplay) {
+		roll_play = true;
+		r_index = 0;
+		Pd.start();
+		speed = melody[r_index][1]*1000;
+        if(melody[r_index][0]>=10){
+            freq = note[melody[r_index][0]/10]/2;
+        }
+        else{
+            freq = note[melody[r_index][0]];
+        }
+        Pd.send("freq0", [freq]);
+        Pd.send("speed0", [speed]);
+        Pd.send("vol0", [1]);
+        start_frame = frameCount;
 	}
 
 	for (let i = 0; i<select_char.length; i++){
