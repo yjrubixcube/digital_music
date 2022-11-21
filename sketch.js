@@ -96,8 +96,8 @@ class State {
 
 let bar = new Rectangle(bar_x, bar_y, bar_width, bar_height);
 let button = new Rectangle(button_x, button_y, button_width, button_height);
-let bar2 = new Rectangle(bar_x + 1.3 * bar_width, bar_y, bar_width, bar_height);
-let but2 = new Rectangle(button_x + 1.3 * bar_width, button_y, button_width, button_height);
+let bar2 = new Rectangle(bar_x + 1.5 * bar_width, bar_y, bar_width, bar_height);
+let but2 = new Rectangle(button_x + 1.5 * bar_width, button_y, button_width, button_height);
 
 let freq_slider = new Slider(bar, button);
 let speed_slider = new Slider(bar2, but2);
@@ -114,6 +114,8 @@ let start_image;
 let stop_image;
 let del_image;
 let random_image;
+let freq_image;
+let speed_image;
 //let stop_button = new Rectangle(screen[0]/20 + 150, screen[1] - 60, 40, 40);
 let start_button;
 let stop_button;
@@ -148,9 +150,9 @@ function setup() {
 	sound_figure[2].push(loadImage("images/wen_yee.jpg"));
 	sound_figure[2].push(loadImage("images/wen_ah.jpg"));
 
-	select_char.push(new my_button(50, screen[1] - 140, 50, 40, main_figure[0]));
-	select_char.push(new my_button(170, screen[1] - 140, 50, 40, main_figure[1]));
-	select_char.push(new my_button(290, screen[1] - 140, 50, 40, main_figure[2]));
+	select_char.push(new my_button(25, screen[1] - 140, 50, 40, main_figure[0]));
+	select_char.push(new my_button(125, screen[1] - 140, 50, 40, main_figure[1]));
+	select_char.push(new my_button(225, screen[1] - 140, 50, 40, main_figure[2]));
 
 	start_image = loadImage("images/play.png");
 	start_button = new my_button(screen[0] - 370, screen[1] - 120, 100, 100, start_image);
@@ -165,9 +167,11 @@ function setup() {
 	ho_button = new my_button(screen[0]/20, screen[1] - 90, 40, 40, butt_images[0]);
 	huh_button = new my_button(screen[0]/20 - 40, screen[1] - 40, 40, 40, butt_images[1]);
 	ah_button = new my_button(screen[0]/20 + 40, screen[1] - 40, 40, 40, butt_images[2]);
-	del_image = loadImage("images/del.jpg");
-	del_button = new my_button(screen[0]/20 + 150, screen[1] - 60, 40, 40, del_image);
+	del_image = loadImage("images/del2.png");
+	del_button = new my_button(screen[0]/20 + 150, screen[1] - 75, 55, 55, del_image);
 	
+	freq_image = loadImage("images/freq.png");
+	speed_image = loadImage("images/sanic.png");
 }
 
 let play = false;
@@ -192,6 +196,8 @@ function draw() {
 	huh_button.render();
 	ah_button.render();
 	del_button.render();
+	image(freq_image, freq_slider.bar.x - 65, freq_slider.bar.y - 35, 60, 80);
+	image(speed_image, speed_slider.bar.x - 85, speed_slider.bar.y - 50, 100, 100);
 	//stop_button.render(color(255, 0, 0));
 	//random_button.render(color(0, 0, 255));
 	buffer_bar.render(color(127,127,127, 127));
@@ -222,12 +228,9 @@ function draw() {
 	}
 	
 	if(play){
-		if(frameCount - start_frame >= buffer[index].speed / 1000 * 60){
-			start_frame = frameCount;
-			index = index + 1;
-		}
+		if(frameCount - start_frame > speed / 1000 * 60){
+			index++;
 
-		if(frameCount == start_frame){
 			Pd.send("vol0", [0]);
 			Pd.send("vol1", [0]);
 			Pd.send("vol2", [0]);
@@ -236,23 +239,24 @@ function draw() {
 				freq = buffer[index].freq;
 				speed = buffer[index].speed;
 				if(s_type == 0){
-					Pd.send("freq0", [buffer[index].freq]);
-					Pd.send("speed0", [buffer[index].speed]);
+					Pd.send("freq0", [freq]);
+					Pd.send("speed0", [speed]);
 					Pd.send("vol0", [1]);
 				}
 				else if(s_type == 1){
-					Pd.send("freq1", [buffer[index].freq]);
-					Pd.send("speed1", [buffer[index].speed]);
+					Pd.send("freq1", [freq]);
+					Pd.send("speed1", [speed]);
 					Pd.send("vol1", [1]);
 				}
-				else if(s_type == 2){
-					Pd.send("freq2", [buffer[index].freq]);
-					Pd.send("speed2", [buffer[index].speed]);
+				else{
+					Pd.send("freq2", [freq]);
+					Pd.send("speed2", [speed]);
 					Pd.send("vol2", [1]);
 				}
+				start_frame = frameCount;
 			}
 			else{
-				buffer.length = 0;
+				//buffer.length = 0;
 				play = false;
 				Pd.stop();
 			}
@@ -277,7 +281,7 @@ function draw() {
 			Pd.send("speed1", [speed]);
 			Pd.send("vol1", [1]);
 		}
-		else if(s_type == 2){
+		else{
 			Pd.send("freq2", [freq]);
 			Pd.send("speed2", [speed]);
 			Pd.send("vol2", [1]);
@@ -371,27 +375,29 @@ function mouseClicked() {
 	if (start_button.pressed_or_clicked() && !play && !rplay && buffer.length) {
 		play = true;
 		index = 0;
-		start_frame = frameCount;
 		Pd.start();
 		s_type = buffer[index].sound_type;
+		freq = buffer[index].freq;
+		speed = buffer[index].speed;
 		if(s_type == 0){
-			Pd.send("freq0", [buffer[index].freq]);
-			Pd.send("speed0", [buffer[index].speed]);
+			Pd.send("freq0", [freq]);
+			Pd.send("speed0", [speed]);
 			Pd.send("vol0", [1]);
 		}
 		else if(s_type == 1){
-			Pd.send("freq1", [buffer[index].freq]);
-			Pd.send("speed1", [buffer[index].speed]);
+			Pd.send("freq1", [freq]);
+			Pd.send("speed1", [speed]);
 			Pd.send("vol1", [1]);
 		}
-		else if(s_type == 2){
-			Pd.send("freq2", [buffer[index].freq]);
-			Pd.send("speed2", [buffer[index].speed]);
+		else{
+			Pd.send("freq2", [freq]);
+			Pd.send("speed2", [speed]);
 			Pd.send("vol2", [1]);
 		}
+		start_frame = frameCount;
 	}
 	if (stop_button.pressed_or_clicked() && (play || rplay)) {
-		buffer.length = 0;
+		//buffer.length = 0;
 		play = false;
 		rplay = false;
 		Pd.send("vol0", [0]);
