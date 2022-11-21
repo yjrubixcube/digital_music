@@ -232,6 +232,7 @@ function draw() {
 			Pd.send("vol1", [0]);
 			Pd.send("vol2", [0]);
 			if(index < buffer.length){
+				s_type = buffer[index].sound_type;
 				freq = buffer[index].freq;
 				speed = buffer[index].speed;
 				if(s_type == 0){
