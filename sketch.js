@@ -120,11 +120,13 @@ let random_image;
 let freq_image;
 let speed_image;
 let roll_image;
+let clear_iamge;
 //let stop_button = new Rectangle(screen[0]/20 + 150, screen[1] - 60, 40, 40);
 let start_button;
 let stop_button;
 let random_button;
 let roll_button;
+let clear_button
 //let random_button = new Rectangle(screen[0]/20 + 300, screen[1] - 60, 40, 40);
 let select_char = [];
 let buffer = [];
@@ -166,7 +168,7 @@ function setup() {
 	random_image = loadImage("images/weed.png");
 	random_button = new my_button(screen[0] - 110, screen[1] - 120, 100, 100, random_image);
 	roll_image = loadImage("images/roll.jpg");
-	roll_button = new my_button(screen[0] - 110, screen[1] - 240, 100, 100, roll_image);
+	roll_button = new my_button(screen[0] - 25, screen[1] - 25, 20, 20, roll_image);
 
 	butt_images.push(loadImage("images/HO.jpg"));
 	butt_images.push(loadImage("images/HE.jpg"));
@@ -174,8 +176,10 @@ function setup() {
 	ho_button = new my_button(screen[0]/20, screen[1] - 90, 40, 40, butt_images[0]);
 	huh_button = new my_button(screen[0]/20 - 40, screen[1] - 40, 40, 40, butt_images[1]);
 	ah_button = new my_button(screen[0]/20 + 40, screen[1] - 40, 40, 40, butt_images[2]);
-	del_image = loadImage("images/del2.png");
-	del_button = new my_button(screen[0]/20 + 150, screen[1] - 75, 55, 55, del_image);
+	del_image = loadImage("images/back.png");
+	del_button = new my_button(screen[0]/20 + 100, screen[1] - 75, 55, 55, del_image);
+	clear_iamge = loadImage("images/del.png");
+	clear_button = new my_button(screen[0]/20 + 180, screen[1] - 75, 55, 55, clear_iamge);
 	
 	freq_image = loadImage("images/freq.png");
 	speed_image = loadImage("images/sanic.png");
@@ -206,15 +210,16 @@ function draw() {
 	huh_button.render();
 	ah_button.render();
 	del_button.render();
+	clear_button.render();
 	image(freq_image, freq_slider.bar.x - 65, freq_slider.bar.y - 35, 60, 80);
 	image(speed_image, speed_slider.bar.x - 85, speed_slider.bar.y - 50, 100, 100);
 	//stop_button.render(color(255, 0, 0));
 	//random_button.render(color(0, 0, 255));
 	buffer_bar.render(color(127,127,127, 127));
 	noTint();
-	for (let i = 0; i < buffer.length; i++){
+	for (let i = int((buffer.length - 1) /  11) * 11; i < buffer.length; i++){
 		tint(255, 191);
-		image(butt_images[buffer[i].sound_type], buffer_bar_x + 10 + i*(100+10), buffer_bar_y + 10, 100, 80, 0, 0, butt_images[buffer[i].sound_type].width, butt_images[buffer[i].sound_type].height, COVER); //100,80
+		image(butt_images[buffer[i].sound_type], buffer_bar_x + 10 + (i % 11)*(100+10), buffer_bar_y + 10, 100, 80, 0, 0, butt_images[buffer[i].sound_type].width, butt_images[buffer[i].sound_type].height, COVER); //100,80
 	}
 	noTint();
 	
@@ -361,53 +366,20 @@ function mouse_over(shape) {
 
 
 function mouseClicked() {
-	if (ho_button.pressed_or_clicked() && !play && buffer.length < 11) {
+	if (ho_button.pressed_or_clicked() && !play) {
 		buffer.push(new State(character, 0, freq_slider.get_val(), speed_slider.get_val(), 1));
-		/*
-		play = true;
-		Pd.start();
-
-		start_frame = frameCount;
-		freq = freq_slider.get_val();
-		speed = speed_slider.get_val();
-		s_type = 0;
-		Pd.send("freq0", [freq]);
-		Pd.send("speed0", [speed]);
-		Pd.send("vol0", [1]);
-		*/
 	}
-	if (huh_button.pressed_or_clicked() && !play && buffer.length < 11) {
+	if (huh_button.pressed_or_clicked() && !play) {
 		buffer.push(new State(character, 1, freq_slider.get_val(), speed_slider.get_val(), 1));
-		/*
-		play = true;
-		Pd.start();
-
-		start_frame = frameCount;
-		freq = freq_slider.get_val();
-		speed = speed_slider.get_val();
-		s_type = 1;
-		Pd.send("freq1", [freq]);
-		Pd.send("speed1", [speed]);
-		Pd.send("vol1", [1]);
-		*/
 	}
-	if (ah_button.pressed_or_clicked() && !play && buffer.length < 11) {
+	if (ah_button.pressed_or_clicked() && !play) {
 		buffer.push(new State(character, 2, freq_slider.get_val(), speed_slider.get_val(), 1));
-		/*
-		play = true;
-		Pd.start();
-
-		start_frame = frameCount;
-		freq = freq_slider.get_val();
-		speed = speed_slider.get_val();
-		s_type = 2;
-		Pd.send("freq2", [freq]);
-		Pd.send("speed2", [speed]);
-		Pd.send("vol2", [1]);
-		*/
 	}
 	if (del_button.pressed_or_clicked() && !play) {
 		buffer.pop();
+	}
+	if (clear_button.pressed_or_clicked() && !play) {
+		buffer.length = 0;
 	}
 	if (start_button.pressed_or_clicked() && !play && !rplay && !roll_play && buffer.length) {
 		play = true;
