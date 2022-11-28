@@ -1,6 +1,6 @@
 // const { memoryUsage } = require("process");
-
-let melody = [[5,0.12],[6,0.12],[10,0.12],[5,0.12],[30,0.36],[30,0.36],[20,0.72],[5,0.12],[6,0.12],[7,0.12],[5,0.12],[20,0.36],[20,0.36],[10,0.72]];
+let note_l = 0.12
+let melody = [[5,1],[6,1],[10,1],[5,1],[30,3],[30,3],[20,6], [5,1],[6,1],[7,1],[5,1],[20,3],[20,3],[10,6], [5,1],[6,1],[10,1],[6,1],[10,4],[20,2],[7,4],[6,4],[5,2],[20,4],[10,4]];
 let note = [0, 1054.94, 939.85, 837.31, 790.31, 704.09, 627.27, 558.84];
 
 // global vars
@@ -309,7 +309,7 @@ function draw() {
 			Pd.send("vol1", [0]);
 			Pd.send("vol2", [0]);
 			if (r_index < melody.length) {
-				speed = melody[r_index][1]*1000;
+				speed = melody[r_index][1]*1000*note_l;
 				if(melody[r_index][0]>=10){
 					freq = note[melody[r_index][0]/10]/2;
 				}
@@ -425,7 +425,7 @@ function mouseClicked() {
 		roll_play = true;
 		r_index = 0;
 		Pd.start();
-		speed = melody[r_index][1]*1000;
+		speed = melody[r_index][1]*1000*note_l;
         if(melody[r_index][0]>=10){
             freq = note[melody[r_index][0]/10]/2;
         }
