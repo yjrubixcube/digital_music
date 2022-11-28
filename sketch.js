@@ -162,11 +162,11 @@ function setup() {
 	select_char.push(new my_button(225, screen[1] - 140, 50, 40, main_figure[2]));
 
 	start_image = loadImage("images/play.png");
-	start_button = new my_button(screen[0] - 370, screen[1] - 120, 100, 100, start_image);
+	start_button = new my_button(screen[0] - 370, screen[1] - 125, 100, 100, start_image);
 	stop_image = loadImage("images/stop.png");
-	stop_button = new my_button(screen[0] - 240, screen[1] - 120, 100, 100, stop_image);
+	stop_button = new my_button(screen[0] - 240, screen[1] - 125, 100, 100, stop_image);
 	random_image = loadImage("images/weed.png");
-	random_button = new my_button(screen[0] - 110, screen[1] - 120, 100, 100, random_image);
+	random_button = new my_button(screen[0] - 110, screen[1] - 125, 100, 100, random_image);
 	roll_image = loadImage("images/roll.jpg");
 	roll_button = new my_button(screen[0] - 25, screen[1] - 25, 20, 20, roll_image);
 
@@ -213,8 +213,6 @@ function draw() {
 	clear_button.render();
 	image(freq_image, freq_slider.bar.x - 65, freq_slider.bar.y - 35, 60, 80);
 	image(speed_image, speed_slider.bar.x - 85, speed_slider.bar.y - 50, 100, 100);
-	//stop_button.render(color(255, 0, 0));
-	//random_button.render(color(0, 0, 255));
 	buffer_bar.render(color(127,127,127, 127));
 	noTint();
 	for (let i = int((buffer.length - 1) /  11) * 11; i < buffer.length; i++){
@@ -331,7 +329,8 @@ function draw() {
 	}
 
 	if ((play && index < buffer.length && ((frameCount - start_frame) % (speed / 1000 * 60) < (min(freq, speed) / 1000 * 60) - 10)) ||
-		(rplay && (frameCount - start_frame) % 15 <= 8)) {
+		(rplay && (frameCount - start_frame) % 15 <= 8) ||
+		(roll_play && ((frameCount - start_frame) % (speed / 1000 * 60) < (min(freq, speed) / 1000 * 60) - 3))) {
 		if (opach >= 0) {
 			opach -= 200;
 
@@ -436,6 +435,7 @@ function mouseClicked() {
         Pd.send("freq0", [freq]);
         Pd.send("speed0", [speed]);
         Pd.send("vol0", [1]);
+		s_type = 2;
         start_frame = frameCount;
 	}
 
